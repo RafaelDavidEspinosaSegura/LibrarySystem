@@ -1,5 +1,5 @@
-﻿using LibrarySystem.Application.Interfaces;
-using LibrarySystem.Domain.Entities;
+﻿using LibrarySystem.Domain.Entities;
+using LibrarySystem.Application.Interfaces;
 using LibrarySystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,21 +14,31 @@ namespace LibrarySystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Book?> GetByIdAsync(int id) =>
-            await _context.Books
+        public async Task<IEnumerable<Book>> GetAllAsync()
+        {
+            return await _context.Books
                 .Include(b => b.Authors)
                 .Include(b => b.Category)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-        public async Task<IEnumerable<Book>> GetAllAsync() =>
-            await _context.Books
-                .Include(b => b.Authors)
-                .Include(b => b.Category)
+                .Include(b => b.Copies)
+                .Include(b => b.Loans)
+                .Include(b => b.Reservations)
                 .ToListAsync();
+        }
+
+        public async Task<Book?> GetByIdAsync(int id)
+        {
+            return await _context.Books
+                .Include(b => b.Authors)
+                .Include(b => b.Category)
+                .Include(b => b.Copies)
+                .Include(b => b.Loans)
+                .Include(b => b.Reservations)
+                .FirstOrDefaultAsync(b => b.Id == id);
+        }
 
         public async Task AddAsync(Book book)
         {
-            await _context.Books.AddAsync(book);
+            _context.Books.Add(book);
             await _context.SaveChangesAsync();
         }
 

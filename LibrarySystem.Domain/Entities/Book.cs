@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema; // Requerido para [NotMapped]
 using System.Text.Json.Serialization;
 
 namespace LibrarySystem.Domain.Entities
@@ -19,10 +20,16 @@ namespace LibrarySystem.Domain.Entities
         [JsonIgnore] // rompe ciclo con Copy
         public List<Copy> Copies { get; set; } = new List<Copy>();
 
-        public Book(string title, string isbn, DateTime publicationDate, int categoryId)
+        [NotMapped] // Ignora esta propiedad en la base de datos
+        public object Loans { get; set; }
+
+        [NotMapped] // Ignora esta propiedad en la base de datos
+        public object Reservations { get; set; }
+
+        public Book(string title, string iSBN, DateTime publicationDate, int categoryId)
         {
             Title = title;
-            ISBN = isbn;
+            ISBN = iSBN;
             PublicationDate = publicationDate;
             CategoryId = categoryId;
         }
