@@ -18,10 +18,32 @@ namespace LibrarySystem.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>()
-                .HasMany(b => b.Authors)
-                .WithMany(a => a.Books);
+                .Property(b => b.PublicationDate)
+                .HasConversion(
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                );
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Loan>()
+                .Property(l => l.LoanDate)
+                .HasConversion(
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                );
+
+            modelBuilder.Entity<Loan>()
+                .Property(l => l.ReturnDate)
+                .HasConversion(
+                    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v,
+                    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v
+                );
+
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.ReservationDate)
+                .HasConversion(
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                );
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema; // Requerido para [NotMapped]
 using System.Text.Json.Serialization;
 
 namespace LibrarySystem.Domain.Entities
@@ -13,18 +12,14 @@ namespace LibrarySystem.Domain.Entities
         public required string ISBN { get; set; }
 
         public List<Author> Authors { get; set; } = new List<Author>();
-
         public Category? Category { get; set; }
         public int CategoryId { get; set; }
 
-        [JsonIgnore] // rompe ciclo con Copy
+        [JsonIgnore]
         public List<Copy> Copies { get; set; } = new List<Copy>();
 
-        [NotMapped] // Ignora esta propiedad en la base de datos
-        public object Loans { get; set; }
-
-        [NotMapped] // Ignora esta propiedad en la base de datos
-        public object Reservations { get; set; }
+        public ICollection<Loan> Loans { get; set; } = new List<Loan>();
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 
         public Book(string title, string iSBN, DateTime publicationDate, int categoryId)
         {
@@ -33,5 +28,7 @@ namespace LibrarySystem.Domain.Entities
             PublicationDate = publicationDate;
             CategoryId = categoryId;
         }
+
+        public Book() { }
     }
 }
